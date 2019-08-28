@@ -36,6 +36,7 @@ class IC():
              理论上会出现双箭头+marked的情况，由rule1得到单箭头mark，由rule2得到另一个方向的箭头，这符合paper的算法，但不符合实际，
              能满足rule1则不可能满足rule2因为显然已经不是一个collider的结构也就是a与b不独立，那么既然a与b没有相邻，则a与b一定given c
              条件独立。则只有3种情况，a->c->b,a<-c<-b,a<-c->b,因为a->c了，所以只有可能c->b，所以这个时候不应该在通过rule2加箭头
+             有一个路径gmv->ratio->pay_uv->ipv_uv满足rule 2所有gmv->ipv_uv，但ipv_uv已经*->gmv了
             """
             added_arrows = R1_added_arrows or R2_added_arrows
 
