@@ -28,9 +28,11 @@ class IC():
         self._orient_colliders()
 
         added_arrows = True
+        # add arrows recursively
         while added_arrows:
             R1_added_arrows = self._apply_recursion_rule_1()
             R2_added_arrows = self._apply_recursion_rule_2()
+            # 理论上会出现双箭头+marked的情况，由rule1得到单箭头mark，由rule2得到另一个方向的箭头
             added_arrows = R1_added_arrows or R2_added_arrows
 
         return self._g
@@ -57,11 +59,13 @@ class IC():
             for (a,b) in itertools.combinations(self._g.neighbors(c), 2):
                 if not self._g.has_edge(a,b):
                     if c in self._g[a][c]['arrows'] and c not in self._g[b][c]['arrows'] and not (b in self._g[b][c]['arrows'] and self._g[b][c]['marked']):
-                        self._g[b][c]['arrows'].append(b)
+                        if b not in self._g[b][c]['arrows']:
+                            self._g[b][c]['arrows'].append(b)
                         self._g[b][c]['marked'] = True
                         added_arrows = True
                     if c in self._g[b][c]['arrows'] and c not in self._g[a][c]['arrows'] and not (a in self._g[a][c]['arrows'] and self._g[a][c]['marked']):
-                        self._g[a][c]['arrows'].append(a)
+                        if a not in self._g[a][c]['arrows']:
+                            self._g[a][c]['arrows'].append(a)
                         self._g[a][c]['marked'] = True
                         added_arrows = True
         return added_arrows
@@ -71,7 +75,8 @@ class IC():
         for (a,b) in self._g.edges():
             if b not in self._g[a][b]['arrows']:
                 if self._marked_directed_path(a,b):
-                    self._g[a][b]['arrows'].append(b)
+                    if b not in self._g[a][b]['arrows']:
+                        self._g[a][b]['arrows'].append(b)
                     added_arrows = True
         return added_arrows
 
