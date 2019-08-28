@@ -91,13 +91,18 @@ class IC():
 
     def _orient_colliders(self):
         for v_i, v_j in self._g.edges():
+            # _g[v_i]是v_i全部的neighbor
             self._g[v_i][v_j]['arrows'] = []
+        # 2 step
         for v_c in self._g.nodes():
             for (v_a,v_b) in itertools.combinations(self._g.neighbors(v_c), 2):
-                if not self._g.has_edge(v_a,v_b):
+                if not self._g.has_edge(v_a,v_b):# for each pair of nonadjacent variables v_a and v_b with common neighbor v_c
+                    # c与ab有关，且a和b given c条件独立，所以a,c,b形成一个collider
                     if v_c not in self.separating_set(v_a,v_b):
-                        self._g[v_a][v_c]['arrows'].append(v_c)
-                        self._g[v_b][v_c]['arrows'].append(v_c)
+                        if v_c not in self._g[v_a][v_c]['arrows']:
+                            self._g[v_a][v_c]['arrows'].append(v_c)
+                        if v_c not in self._g[v_b][v_c]['arrows']:
+                            self._g[v_b][v_c]['arrows'].append(v_c)
 
     def separating_set(self, xi, xj, data=None, variable_types=None):
         if not self.separating_sets and data and variable_types:
