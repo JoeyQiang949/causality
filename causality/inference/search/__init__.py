@@ -46,6 +46,7 @@ class IC():
         for var, var_type in variable_types.items():
             self._g.node[var]['type'] = var_type
         edges_to_add = []
+        # 做全连通图
         for (node_a, node_b) in itertools.combinations(self._g.node.keys(), 2):
             edges_to_add.append((node_a,node_b))
         self._g.add_edges_from(edges_to_add, marked=False)
@@ -127,6 +128,7 @@ class IC():
                 x_neighbors = list(self._g.neighbors(x))
                 y_neighbors = list(self._g.neighbors(y))
                 z_candidates = list(set(x_neighbors + y_neighbors) - set([x,y]))
+                # 对于一个edge上的两个node x和y，如果能找到集合z，s.t. x和y given z条件独立，则x和y的线取掉
                 for z in itertools.combinations(z_candidates, N):
                     test = self.independence_test([y], [x], list(z),
                         data, self.alpha)
