@@ -32,7 +32,8 @@ class IC():
         while added_arrows:
             R1_added_arrows = self._apply_recursion_rule_1()
             R2_added_arrows = self._apply_recursion_rule_2()
-            # 理论上会出现双箭头+marked的情况，由rule1得到单箭头mark，由rule2得到另一个方向的箭头
+            # 理论上会出现双箭头+marked的情况，由rule1得到单箭头mark，由rule2得到另一个方向的箭头，这符合paper的算法，但不符合实际，
+            # 能满足rule1则不可能满足rule2因为显然已经不是一个collider的结构。所以这个时候不应该在通过rule2加箭头
             added_arrows = R1_added_arrows or R2_added_arrows
 
         return self._g
@@ -59,6 +60,7 @@ class IC():
             for (a,b) in itertools.combinations(self._g.neighbors(c), 2):
                 if not self._g.has_edge(a,b):
                     if c in self._g[a][c]['arrows'] and c not in self._g[b][c]['arrows'] and not (b in self._g[b][c]['arrows'] and self._g[b][c]['marked']):
+                        # 根据step2，上面条件满足证明c在S_ab之中，否则会有一个b到c的箭头，所有c肯定d-seperate，所以c肯定指向b
                         if b not in self._g[b][c]['arrows']:
                             self._g[b][c]['arrows'].append(b)
                         self._g[b][c]['marked'] = True
@@ -76,7 +78,8 @@ class IC():
             if b not in self._g[a][b]['arrows']:
                 if self._marked_directed_path(a,b):
                     if b not in self._g[a][b]['arrows']:
-                        self._g[a][b]['arrows'].append(b)
+                        if not _g[a][b]['marked']:
+                            self._g[a][b]['arrows'].append(b)
                     added_arrows = True
         return added_arrows
 
