@@ -81,7 +81,7 @@ class IC():
         for (a,b) in self._g.edges():
             if b not in self._g[a][b]['arrows']:
                 if self._marked_directed_path(a,b):
-                    if not _g[a][b]['marked']:
+                    if not self._g[a][b]['marked']:
                         self._g[a][b]['arrows'].append(b)
                     added_arrows = True
         return added_arrows
